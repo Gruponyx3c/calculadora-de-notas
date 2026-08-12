@@ -355,18 +355,28 @@
   <div id="tab-materia" class="tab-content">
     <form id="notesForm">
       <div class="field">
-        <label for="foro">FORO ACTIVIDAD EN CLASES <span class="weight">15%</span></label>
+        <label for="foro">FORO ACTIVIDAD EN CLASES <span class="weight">10%</span></label>
         <input type="number" id="foro" min="0" max="100" step="0.1" placeholder="Ej: 90" required />
       </div>
 
       <div class="field">
-        <label for="primera">EXPOSICIONES. <span class="weight">20%</span></label>
+        <label for="primera">EXPOSICIONES. <span class="weight">15%</span></label>
         <input type="number" id="primera" min="0" max="100" step="0.1" placeholder="Ej: 85" required />
       </div>
 
       <div class="field">
         <label for="participacion">Participación <span class="weight">5%</span></label>
         <input type="number" id="participacion" min="0" max="100" step="0.1" placeholder="Ej: 100" required />
+      </div>
+
+      <div class="field">
+        <label for="clase1">ACTIVIDAD EN CLASE <span class="weight">5%</span></label>
+        <input type="number" id="clase1" min="0" max="100" step="0.1" placeholder="Ej: 90" required />
+      </div>
+
+      <div class="field">
+        <label for="clase2">ACTIVIDAD EN CLASE 2 <span class="weight">5%</span></label>
+        <input type="number" id="clase2" min="0" max="100" step="0.1" placeholder="Ej: 90" required />
       </div>
 
       <div class="field">
@@ -493,14 +503,9 @@
     return Math.min(100, Math.max(0, n));
   }
 
-  // Ponderaciones fijas de la rúbrica (misma estructura para ambas materias)
-  const PESO_FORO = 0.15;
-  const PESO_PRIMERA = 0.20;
-  const PESO_PARTICIPACION = 0.05;
-  const PESO_FINAL = 0.30;
-  const PESO_EXAMEN = 0.30; // 30% restante
-
   // Crea el manejador de cálculo para una materia, dado el prefijo de sus ids.
+  // opts.campos: lista de { id, peso } de las actividades que suman antes del examen.
+  // opts.pesoExamen: porcentaje que vale el examen (el resto, sobre 1).
   // opts.hasExamenReal: si esta materia tiene el campo opcional para ingresar
   // la nota real del examen (ya rendido) y así mostrar la nota final del curso.
   function setupCalculadora(prefix, opts){
@@ -513,18 +518,14 @@
     form.addEventListener('submit', function(e){
       e.preventDefault();
 
-      const foro = clamp(parseFloat(document.getElementById(p + 'foro').value));
-      const primera = clamp(parseFloat(document.getElementById(p + 'primera').value));
-      const participacion = clamp(parseFloat(document.getElementById(p + 'participacion').value));
-      const final = clamp(parseFloat(document.getElementById(p + 'final').value));
       const notaMinima = clamp(parseFloat(document.getElementById(p + 'minima').value) || 70);
 
-      // Puntos reales acumulados (sobre 70 puntos posibles)
-      const puntosAcumulados =
-        (foro * PESO_FORO) +
-        (primera * PESO_PRIMERA) +
-        (participacion * PESO_PARTICIPACION) +
-        (final * PESO_FINAL);
+      // Puntos reales acumulados (suma de cada actividad × su peso)
+      let puntosAcumulados = 0;
+      opts.campos.forEach(function(campo){
+        const valor = clamp(parseFloat(document.getElementById(p + campo.id).value));
+        puntosAcumulados += valor * campo.peso;
+      });
 
       document.getElementById(p + 'puntosAcum').textContent = puntosAcumulados.toFixed(2) + ' pts';
 
@@ -537,7 +538,7 @@
       if(tieneExamenReal){
         // ---- Ya rindió el examen: mostrar la nota final del curso ----
         const examenReal = clamp(parseFloat(examenInput.value));
-        const notaFinalCurso = puntosAcumulados + (examenReal * PESO_EXAMEN);
+        const notaFinalCurso = puntosAcumulados + (examenReal * opts.pesoExamen);
         const aprobo = notaFinalCurso >= notaMinima;
 
         document.getElementById(p + 'puntosFaltanLabel').textContent = 'Nota del examen';
@@ -565,7 +566,7 @@
         }
 
         const puntosFaltantes = notaMinima - puntosAcumulados;
-        const notaNecesaria = puntosFaltantes / PESO_EXAMEN;
+        const notaNecesaria = puntosFaltantes / opts.pesoExamen;
 
         document.getElementById(p + 'puntosFaltan').textContent =
           (puntosFaltantes > 0 ? puntosFaltantes.toFixed(2) : '0.00') + ' pts';
@@ -606,13 +607,29 @@
     });
   }
 
-  setupCalculadora('', {                          // Materia (ids sin prefijo: foro, primera, ...)
+  setupCalculadora('', {                          // Criminalística (ids sin prefijo: foro, primera, ...)
     hasExamenReal: true,
-    defaultBigLabel: 'Necesitas en el Examen Final'
+    defaultBigLabel: 'Necesitas en el Examen Final',
+    pesoExamen: 0.30,
+    campos: [
+      { id: 'foro', peso: 0.10 },
+      { id: 'primera', peso: 0.15 },
+      { id: 'participacion', peso: 0.05 },
+      { id: 'clase1', peso: 0.05 },
+      { id: 'clase2', peso: 0.05 },
+      { id: 'final', peso: 0.30 }
+    ]
   });
   setupCalculadora('c', {                         // Cálculo (ids con prefijo c_: c_foro, c_primera, ...)
     hasExamenReal: true,
-    defaultBigLabel: 'Necesitas en el Examen Teórico'
+    defaultBigLabel: 'Necesitas en el Examen Teórico',
+    pesoExamen: 0.30,
+    campos: [
+      { id: 'foro', peso: 0.15 },
+      { id: 'primera', peso: 0.20 },
+      { id: 'participacion', peso: 0.05 },
+      { id: 'final', peso: 0.30 }
+    ]
   });
 
   // Switch entre pestañas
