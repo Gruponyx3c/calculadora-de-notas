@@ -298,6 +298,44 @@
   @media (min-width:480px){
     .card{ padding: 40px 34px 34px; }
   }
+
+  /* Tabs de materias */
+  .tabs{
+    display:flex;
+    gap:6px;
+    background: var(--pink-100);
+    padding: 5px;
+    border-radius: 18px;
+    margin-top: 18px;
+  }
+
+  .tab-btn{
+    flex:1;
+    border:none;
+    background:transparent;
+    padding: 10px 8px;
+    border-radius: 14px;
+    font-family:'Poppins', sans-serif;
+    font-size: 0.85rem;
+    font-weight:600;
+    color: var(--text-soft);
+    cursor:pointer;
+    transition: all 0.25s ease;
+  }
+
+  .tab-btn.active{
+    background: var(--white);
+    color: var(--pink-600);
+    box-shadow: 0 6px 14px rgba(225, 75, 133, 0.22);
+  }
+
+  .tab-content{
+    animation: fadeSlideIn 0.4s ease both;
+  }
+
+  .tab-content.hidden{
+    display:none;
+  }
 </style>
 </head>
 <body>
@@ -309,53 +347,114 @@
     <p>Hecha con amor para saber cuánto necesitas en el examen 💕</p>
   </div>
 
-  <form id="notesForm">
-    <div class="field">
-      <label for="foro">Foro Actividad en Clases <span class="weight">15%</span></label>
-      <input type="number" id="foro" min="0" max="100" step="0.1" placeholder="Ej: 90" required />
-    </div>
+  <div class="tabs">
+    <button type="button" class="tab-btn active" data-tab="tab-materia">📚 Materia</button>
+    <button type="button" class="tab-btn" data-tab="tab-calculo">➗ Cálculo</button>
+  </div>
 
-    <div class="field">
-      <label for="primera">Exposiciones <span class="weight">20%</span></label>
-      <input type="number" id="primera" min="0" max="100" step="0.1" placeholder="Ej: 85" required />
-    </div>
-
-    <div class="field">
-      <label for="participacion">Participación <span class="weight">5%</span></label>
-      <input type="number" id="participacion" min="0" max="100" step="0.1" placeholder="Ej: 100" required />
-    </div>
-
-    <div class="field">
-      <label for="final">Ensayo <span class="weight">30%</span></label>
-      <input type="number" id="final" min="0" max="100" step="0.1" placeholder="Ej: 88" required />
-    </div>
-
-    <hr class="divider" />
-
-    <div class="field min-field">
-      <label for="minima">Nota mínima para aprobar 🎯</label>
-      <input type="number" id="minima" min="0" max="100" step="0.1" value="70" required />
-    </div>
-
-    <button type="submit" id="calcBtn">✨ Calcular</button>
-  </form>
-
-  <div id="result">
-    <div class="result-card">
-      <div class="result-row">
-        <span>Puntos acumulados</span>
-        <b id="puntosAcum">-</b>
-      </div>
-      <div class="result-row">
-        <span>Puntos que faltan</span>
-        <b id="puntosFaltan">-</b>
+  <!-- ================= TAB: MATERIA ================= -->
+  <div id="tab-materia" class="tab-content">
+    <form id="notesForm">
+      <div class="field">
+        <label for="foro">Foro Actividad en Clases <span class="weight">15%</span></label>
+        <input type="number" id="foro" min="0" max="100" step="0.1" placeholder="Ej: 90" required />
       </div>
 
-      <div class="big-label">Necesitas en el Examen Final</div>
-      <div class="big-number" id="notaExamen">-</div>
-      <div style="font-size:0.75rem; color:var(--text-soft); margin-top:-6px;">(sobre 100 · vale 30%)</div>
+      <div class="field">
+        <label for="primera">Exposiciones <span class="weight">20%</span></label>
+        <input type="number" id="primera" min="0" max="100" step="0.1" placeholder="Ej: 85" required />
+      </div>
 
-      <div class="message" id="mensaje"></div>
+      <div class="field">
+        <label for="participacion">Participación <span class="weight">5%</span></label>
+        <input type="number" id="participacion" min="0" max="100" step="0.1" placeholder="Ej: 100" required />
+      </div>
+
+      <div class="field">
+        <label for="final">Ensayo <span class="weight">30%</span></label>
+        <input type="number" id="final" min="0" max="100" step="0.1" placeholder="Ej: 88" required />
+      </div>
+
+      <hr class="divider" />
+
+      <div class="field min-field">
+        <label for="minima">Nota mínima para aprobar 🎯</label>
+        <input type="number" id="minima" min="0" max="100" step="0.1" value="70" required />
+      </div>
+
+      <button type="submit" id="calcBtn">✨ Calcular</button>
+    </form>
+
+    <div id="result">
+      <div class="result-card">
+        <div class="result-row">
+          <span>Puntos acumulados</span>
+          <b id="puntosAcum">-</b>
+        </div>
+        <div class="result-row">
+          <span>Puntos que faltan</span>
+          <b id="puntosFaltan">-</b>
+        </div>
+
+        <div class="big-label">Necesitas en el Examen Final</div>
+        <div class="big-number" id="notaExamen">-</div>
+        <div style="font-size:0.75rem; color:var(--text-soft); margin-top:-6px;">(sobre 100 · vale 30%)</div>
+
+        <div class="message" id="mensaje"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= TAB: CÁLCULO ================= -->
+  <div id="tab-calculo" class="tab-content hidden">
+    <form id="calcForm">
+      <div class="field">
+        <label for="c_foro">Foro (Análisis del proyecto) <span class="weight">15%</span></label>
+        <input type="number" id="c_foro" min="0" max="100" step="0.1" placeholder="Ej: 90" required />
+      </div>
+
+      <div class="field">
+        <label for="c_primera">Primera entrega del proyecto <span class="weight">20%</span></label>
+        <input type="number" id="c_primera" min="0" max="100" step="0.1" placeholder="Ej: 85" required />
+      </div>
+
+      <div class="field">
+        <label for="c_participacion">Participación <span class="weight">5%</span></label>
+        <input type="number" id="c_participacion" min="0" max="100" step="0.1" placeholder="Ej: 100" required />
+      </div>
+
+      <div class="field">
+        <label for="c_final">Entrega final del proyecto <span class="weight">30%</span></label>
+        <input type="number" id="c_final" min="0" max="100" step="0.1" placeholder="Ej: 88" required />
+      </div>
+
+      <hr class="divider" />
+
+      <div class="field min-field">
+        <label for="c_minima">Nota mínima para aprobar 🎯</label>
+        <input type="number" id="c_minima" min="0" max="100" step="0.1" value="70" required />
+      </div>
+
+      <button type="submit" id="calcBtnCalculo">✨ Calcular</button>
+    </form>
+
+    <div id="c_result">
+      <div class="result-card">
+        <div class="result-row">
+          <span>Puntos acumulados</span>
+          <b id="c_puntosAcum">-</b>
+        </div>
+        <div class="result-row">
+          <span>Puntos que faltan</span>
+          <b id="c_puntosFaltan">-</b>
+        </div>
+
+        <div class="big-label">Necesitas en el Examen Teórico</div>
+        <div class="big-number" id="c_notaExamen">-</div>
+        <div style="font-size:0.75rem; color:var(--text-soft); margin-top:-6px;">(sobre 100 · vale 30%)</div>
+
+        <div class="message" id="c_mensaje"></div>
+      </div>
     </div>
   </div>
 
@@ -380,85 +479,103 @@
     }
   })();
 
-  const form = document.getElementById('notesForm');
-  const resultBox = document.getElementById('result');
-  const mensajeBox = document.getElementById('mensaje');
-
   function clamp(n){
     if(isNaN(n)) return 0;
     return Math.min(100, Math.max(0, n));
   }
 
-  form.addEventListener('submit', function(e){
-    e.preventDefault();
+  // Ponderaciones fijas de la rúbrica (misma estructura para ambas materias)
+  const PESO_FORO = 0.15;
+  const PESO_PRIMERA = 0.20;
+  const PESO_PARTICIPACION = 0.05;
+  const PESO_FINAL = 0.30;
+  const PESO_EXAMEN = 0.30; // 30% restante
 
-    // Ponderaciones fijas de la rúbrica
-    const PESO_FORO = 0.15;
-    const PESO_PRIMERA = 0.20;
-    const PESO_PARTICIPACION = 0.05;
-    const PESO_FINAL = 0.30;
-    const PESO_EXAMEN = 0.30; // 30% restante
+  // Crea el manejador de cálculo para una materia, dado el prefijo de sus ids
+  function setupCalculadora(prefix){
+    const p = prefix ? prefix + '_' : '';
+    const form = document.getElementById(prefix ? 'calcForm' : 'notesForm');
+    const resultBox = document.getElementById(p + 'result');
+    const mensajeBox = document.getElementById(p + 'mensaje');
 
-    const foro = clamp(parseFloat(document.getElementById('foro').value));
-    const primera = clamp(parseFloat(document.getElementById('primera').value));
-    const participacion = clamp(parseFloat(document.getElementById('participacion').value));
-    const final = clamp(parseFloat(document.getElementById('final').value));
-    const notaMinima = clamp(parseFloat(document.getElementById('minima').value) || 70);
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
 
-    // Puntos reales acumulados (sobre 70 puntos posibles)
-    const puntosAcumulados =
-      (foro * PESO_FORO) +
-      (primera * PESO_PRIMERA) +
-      (participacion * PESO_PARTICIPACION) +
-      (final * PESO_FINAL);
+      const foro = clamp(parseFloat(document.getElementById(p + 'foro').value));
+      const primera = clamp(parseFloat(document.getElementById(p + 'primera').value));
+      const participacion = clamp(parseFloat(document.getElementById(p + 'participacion').value));
+      const final = clamp(parseFloat(document.getElementById(p + 'final').value));
+      const notaMinima = clamp(parseFloat(document.getElementById(p + 'minima').value) || 70);
 
-    // Puntos que faltan para la nota mínima
-    const puntosFaltantes = notaMinima - puntosAcumulados;
+      // Puntos reales acumulados (sobre 70 puntos posibles)
+      const puntosAcumulados =
+        (foro * PESO_FORO) +
+        (primera * PESO_PRIMERA) +
+        (participacion * PESO_PARTICIPACION) +
+        (final * PESO_FINAL);
 
-    // Nota necesaria en el examen teórico (sobre 100)
-    const notaNecesaria = puntosFaltantes / PESO_EXAMEN;
+      // Puntos que faltan para la nota mínima
+      const puntosFaltantes = notaMinima - puntosAcumulados;
 
-    // Mostrar resultados numéricos
-    document.getElementById('puntosAcum').textContent = puntosAcumulados.toFixed(2) + ' pts';
-    document.getElementById('puntosFaltan').textContent =
-      (puntosFaltantes > 0 ? puntosFaltantes.toFixed(2) : '0.00') + ' pts';
+      // Nota necesaria en el examen (sobre 100)
+      const notaNecesaria = puntosFaltantes / PESO_EXAMEN;
 
-    const notaEl = document.getElementById('notaExamen');
-    notaEl.textContent = notaNecesaria <= 0 ? '0' : notaNecesaria.toFixed(1);
+      // Mostrar resultados numéricos
+      document.getElementById(p + 'puntosAcum').textContent = puntosAcumulados.toFixed(2) + ' pts';
+      document.getElementById(p + 'puntosFaltan').textContent =
+        (puntosFaltantes > 0 ? puntosFaltantes.toFixed(2) : '0.00') + ' pts';
 
-    // Mensaje motivacional dinámico + colores
-    let msgClass, msgText, color;
+      const notaEl = document.getElementById(p + 'notaExamen');
+      notaEl.textContent = notaNecesaria <= 0 ? '0' : notaNecesaria.toFixed(1);
 
-    if(notaNecesaria <= 0){
-      msgClass = 'msg-success';
-      msgText = '🎉 ¡Ya aprobaste! No necesitas nada en el examen. ¡Eres una crack!';
-      color = 'var(--success-dark)';
-    } else if(notaNecesaria < 50){
-      msgClass = 'msg-easy';
-      msgText = '😘 La tienes fácil, mi amor. ¡Tú puedes con eso y más!';
-      color = 'var(--pink-600)';
-    } else if(notaNecesaria < 70){
-      msgClass = 'msg-mid';
-      msgText = '💪 Toca esforzarse un poquito, pero sé que lo vas a lograr.';
-      color = 'var(--warning-dark)';
-    } else if(notaNecesaria <= 100){
-      msgClass = 'msg-hard';
-      msgText = '🔥 Va a estar retador, ¡pero confío ciegamente en ti! A estudiar.';
-      color = 'var(--danger-dark)';
-    } else {
-      msgClass = 'msg-impossible';
-      msgText = '😅 Matemáticamente imposible... mejor habla con el profe.';
-      color = '#c0392b';
-    }
+      // Mensaje motivacional dinámico + colores
+      let msgClass, msgText, color;
 
-    notaEl.style.color = color;
-    mensajeBox.className = 'message ' + msgClass;
-    mensajeBox.textContent = msgText;
+      if(notaNecesaria <= 0){
+        msgClass = 'msg-success';
+        msgText = '🎉 ¡Ya aprobaste! No necesitas nada en el examen. ¡Eres una crack!';
+        color = 'var(--success-dark)';
+      } else if(notaNecesaria < 50){
+        msgClass = 'msg-easy';
+        msgText = '😘 La tienes fácil, mi amor. ¡Tú puedes con eso y más!';
+        color = 'var(--pink-600)';
+      } else if(notaNecesaria < 70){
+        msgClass = 'msg-mid';
+        msgText = '💪 Toca esforzarse un poquito, pero sé que lo vas a lograr.';
+        color = 'var(--warning-dark)';
+      } else if(notaNecesaria <= 100){
+        msgClass = 'msg-hard';
+        msgText = '🔥 Va a estar retador, ¡pero confío ciegamente en ti! A estudiar.';
+        color = 'var(--danger-dark)';
+      } else {
+        msgClass = 'msg-impossible';
+        msgText = '😅 Matemáticamente imposible... mejor habla con el profe.';
+        color = '#c0392b';
+      }
 
-    // Mostrar caja de resultado con animación
-    resultBox.classList.remove('show');
-    void resultBox.offsetWidth; // reinicia animación
-    resultBox.classList.add('show');
+      notaEl.style.color = color;
+      mensajeBox.className = 'message ' + msgClass;
+      mensajeBox.textContent = msgText;
+
+      // Mostrar caja de resultado con animación
+      resultBox.classList.remove('show');
+      void resultBox.offsetWidth; // reinicia animación
+      resultBox.classList.add('show');
+    });
+  }
+
+  setupCalculadora('');   // Materia (ids sin prefijo: foro, primera, ...)
+  setupCalculadora('c');  // Cálculo (ids con prefijo c_: c_foro, c_primera, ...)
+
+  // Switch entre pestañas
+  const tabButtons = document.querySelectorAll('.tab-btn');
+  tabButtons.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      tabButtons.forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      document.querySelectorAll('.tab-content').forEach(function(tc){ tc.classList.add('hidden'); });
+      document.getElementById(btn.dataset.tab).classList.remove('hidden');
+    });
   });
 </script>
 
