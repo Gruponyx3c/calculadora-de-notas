@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>💖 Calculadora de Notas para mi Amor</title>
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap');
+
+  :root{
+    --pink-50:#fff5f8;
+    --pink-100:#ffe4ee;
+    --pink-200:#ffc9dd;
+    --pink-300:#ffa8cb;
+    --pink-400:#ff85b3;
+    --pink-500:#f4649b;
+    --pink-600:#e14b85;
+    --purple-300:#d9c7f9;
+    --text-dark:#5c3348;
+    --text-soft:#8a5a72;
+    --white:#ffffff;
+    --success:#7bd48d;
+    --success-dark:#3f9e57;
+    --warning:#ffcf6b;
+    --warning-dark:#c98a1c;
+    --danger:#ff8fa3;
+    --danger-dark:#e14b6a;
+  }
+
+  *{
+    box-sizing: border-box;
+  }
+
+  body{
+    margin:0;
+    min-height:100vh;
+    font-family:'Quicksand', sans-serif;
+    background: linear-gradient(160deg, var(--pink-50), var(--pink-100) 40%, var(--purple-300) 100%);
+    background-attachment: fixed;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding: 24px 16px;
+    color: var(--text-dark);
+    position:relative;
+    overflow-x:hidden;
+  }
+
+  /* Corazones flotantes decorativos */
+  .heart{
+    position:fixed;
+    top:110%;
+    font-size: 22px;
+    color: var(--pink-300);
+    opacity:0.7;
+    animation: floatUp linear infinite;
+    pointer-events:none;
+    z-index:0;
+    user-select:none;
+  }
+
+  @keyframes floatUp{
+    0%{ transform: translateY(0) rotate(0deg); opacity:0;}
+    10%{opacity:0.8;}
+    90%{opacity:0.6;}
+    100%{ transform: translateY(-115vh) rotate(25deg); opacity:0;}
+  }
+
+  .card{
+    position:relative;
+    z-index:1;
+    width:100%;
+    max-width: 440px;
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(10px);
+    border-radius: 32px;
+    padding: 32px 26px 28px;
+    box-shadow: 0 20px 45px rgba(233, 110, 160, 0.25), 0 0 0 1px rgba(255,255,255,0.6) inset;
+    animation: popIn 0.6s cubic-bezier(.26,1.4,.44,1) both;
+    border: 1px solid var(--pink-200);
+  }
+
+  @keyframes popIn{
+    from{ opacity:0; transform: translateY(24px) scale(0.96); }
+    to{ opacity:1; transform: translateY(0) scale(1); }
+  }
+
+  .header{
+    text-align:center;
+    margin-bottom: 22px;
+  }
+
+  .header .emoji{
+    font-size: 42px;
+    display:inline-block;
+    animation: wiggle 2.4s ease-in-out infinite;
+  }
+
+  @keyframes wiggle{
+    0%,100%{ transform: rotate(-6deg); }
+    50%{ transform: rotate(6deg); }
+  }
+
+  .header h1{
+    font-family:'Poppins', sans-serif;
+    font-size: clamp(1.3rem, 5vw, 1.6rem);
+    margin: 8px 0 4px;
+    color: var(--pink-600);
+    font-weight:700;
+  }
+
+  .header p{
+    margin:0;
+    font-size:0.92rem;
+    color: var(--text-soft);
+  }
+
+  form{
+    display:flex;
+    flex-direction:column;
+    gap: 14px;
+    margin-top: 18px;
+  }
+
+  .field{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+  }
+
+  .field label{
+    font-size:0.85rem;
+    font-weight:600;
+    color: var(--text-dark);
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+  }
+
+  .field label .weight{
+    font-size:0.72rem;
+    font-weight:600;
+    color: var(--pink-600);
+    background: var(--pink-100);
+    padding: 2px 9px;
+    border-radius: 999px;
+  }
+
+  .field input{
+    width:100%;
+    padding: 12px 14px;
+    border-radius: 16px;
+    border: 2px solid var(--pink-200);
+    background: var(--white);
+    font-family:'Quicksand', sans-serif;
+    font-size: 1rem;
+    font-weight:600;
+    color: var(--text-dark);
+    transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.15s ease;
+    outline:none;
+  }
+
+  .field input:focus{
+    border-color: var(--pink-400);
+    box-shadow: 0 0 0 4px rgba(255, 133, 179, 0.22);
+    transform: translateY(-1px);
+  }
+
+  .divider{
+    border:none;
+    border-top: 1.5px dashed var(--pink-200);
+    margin: 4px 0;
+  }
+
+  .min-field label{
+    color: var(--pink-600);
+  }
+
+  button#calcBtn{
+    margin-top: 6px;
+    border:none;
+    cursor:pointer;
+    padding: 14px 18px;
+    border-radius: 18px;
+    font-family:'Poppins', sans-serif;
+    font-size: 1.02rem;
+    font-weight:600;
+    color: var(--white);
+    background: linear-gradient(135deg, var(--pink-400), var(--pink-500) 60%, var(--pink-600));
+    box-shadow: 0 10px 22px rgba(225, 75, 133, 0.35);
+    transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+  }
+
+  button#calcBtn:hover{
+    transform: translateY(-2px) scale(1.015);
+    box-shadow: 0 14px 26px rgba(225, 75, 133, 0.42);
+    filter: brightness(1.04);
+  }
+
+  button#calcBtn:active{
+    transform: translateY(0) scale(0.98);
+  }
+
+  /* Resultado */
+  #result{
+    margin-top: 22px;
+    display:none;
+    animation: fadeSlideIn 0.5s ease both;
+  }
+
+  #result.show{
+    display:block;
+  }
+
+  @keyframes fadeSlideIn{
+    from{ opacity:0; transform: translateY(14px); }
+    to{ opacity:1; transform: translateY(0); }
+  }
+
+  .result-card{
+    border-radius: 22px;
+    padding: 20px;
+    background: var(--pink-50);
+    border: 2px solid var(--pink-200);
+    text-align:center;
+  }
+
+  .result-row{
+    display:flex;
+    justify-content:space-between;
+    font-size:0.88rem;
+    color: var(--text-soft);
+    padding: 6px 2px;
+  }
+
+  .result-row b{
+    color: var(--text-dark);
+  }
+
+  .result-row + .result-row{
+    border-top: 1px dashed var(--pink-200);
+  }
+
+  .big-number{
+    margin: 14px 0 6px;
+    font-family:'Poppins', sans-serif;
+    font-size: clamp(2.2rem, 12vw, 2.8rem);
+    font-weight:700;
+    line-height:1;
+  }
+
+  .big-label{
+    font-size:0.78rem;
+    text-transform:uppercase;
+    letter-spacing:0.06em;
+    color: var(--text-soft);
+    font-weight:600;
+  }
+
+  .message{
+    margin-top: 14px;
+    padding: 12px 14px;
+    border-radius: 16px;
+    font-weight:600;
+    font-size:0.95rem;
+    animation: pulseIn 0.5s ease;
+  }
+
+  @keyframes pulseIn{
+    0%{ transform: scale(0.9); opacity:0;}
+    60%{ transform: scale(1.03); opacity:1;}
+    100%{ transform: scale(1);}
+  }
+
+  .msg-success{ background: rgba(123,212,141,0.2); color: var(--success-dark); }
+  .msg-easy{ background: rgba(255,171,207,0.25); color: var(--pink-600); }
+  .msg-mid{ background: rgba(255,207,107,0.28); color: var(--warning-dark); }
+  .msg-hard{ background: rgba(255,143,163,0.3); color: var(--danger-dark); }
+  .msg-impossible{ background: rgba(224,90,90,0.18); color:#c0392b; }
+
+  .signature{
+    text-align:center;
+    margin-top: 22px;
+    font-size: 0.78rem;
+    color: var(--text-soft);
+    opacity:0.8;
+  }
+
+  .signature span{
+    color: var(--pink-500);
+  }
+
+  @media (min-width:480px){
+    .card{ padding: 40px 34px 34px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="header">
+    <span class="emoji">🎀</span>
+    <h1>Calculadora de Notas</h1>
+    <p>Hecha con amor para saber cuánto necesitas en el examen 💕</p>
+  </div>
+
+  <form id="notesForm">
+    <div class="field">
+      <label for="foro">Foro / Análisis <span class="weight">15%</span></label>
+      <input type="number" id="foro" min="0" max="100" step="0.1" placeholder="Ej: 90" required />
+    </div>
+
+    <div class="field">
+      <label for="primera">Primera Entrega <span class="weight">20%</span></label>
+      <input type="number" id="primera" min="0" max="100" step="0.1" placeholder="Ej: 85" required />
+    </div>
+
+    <div class="field">
+      <label for="participacion">Participación <span class="weight">5%</span></label>
+      <input type="number" id="participacion" min="0" max="100" step="0.1" placeholder="Ej: 100" required />
+    </div>
+
+    <div class="field">
+      <label for="final">Entrega Final <span class="weight">30%</span></label>
+      <input type="number" id="final" min="0" max="100" step="0.1" placeholder="Ej: 88" required />
+    </div>
+
+    <hr class="divider" />
+
+    <div class="field min-field">
+      <label for="minima">Nota mínima para aprobar 🎯</label>
+      <input type="number" id="minima" min="0" max="100" step="0.1" value="70" required />
+    </div>
+
+    <button type="submit" id="calcBtn">✨ Calcular</button>
+  </form>
+
+  <div id="result">
+    <div class="result-card">
+      <div class="result-row">
+        <span>Puntos acumulados</span>
+        <b id="puntosAcum">-</b>
+      </div>
+      <div class="result-row">
+        <span>Puntos que faltan</span>
+        <b id="puntosFaltan">-</b>
+      </div>
+
+      <div class="big-label">Necesitas en el Examen Teórico</div>
+      <div class="big-number" id="notaExamen">-</div>
+      <div style="font-size:0.75rem; color:var(--text-soft); margin-top:-6px;">(sobre 100 · vale 30%)</div>
+
+      <div class="message" id="mensaje"></div>
+    </div>
+  </div>
+
+  <div class="signature">hecho con <span>♥</span> para ti</div>
+</div>
+
+<script>
+  // Corazones flotantes de fondo
+  (function crearCorazones(){
+    const emojis = ['💗','💕','💖','💓','🎀'];
+    const total = 14;
+    for(let i=0; i<total; i++){
+      const heart = document.createElement('div');
+      heart.className = 'heart';
+      heart.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+      heart.style.left = Math.random()*100 + 'vw';
+      heart.style.fontSize = (14 + Math.random()*18) + 'px';
+      const duration = 10 + Math.random()*12;
+      heart.style.animationDuration = duration + 's';
+      heart.style.animationDelay = (Math.random()*duration) + 's';
+      document.body.appendChild(heart);
+    }
+  })();
+
+  const form = document.getElementById('notesForm');
+  const resultBox = document.getElementById('result');
+  const mensajeBox = document.getElementById('mensaje');
+
+  function clamp(n){
+    if(isNaN(n)) return 0;
+    return Math.min(100, Math.max(0, n));
+  }
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+
+    // Ponderaciones fijas de la rúbrica
+    const PESO_FORO = 0.15;
+    const PESO_PRIMERA = 0.20;
+    const PESO_PARTICIPACION = 0.05;
+    const PESO_FINAL = 0.30;
+    const PESO_EXAMEN = 0.30; // 30% restante
+
+    const foro = clamp(parseFloat(document.getElementById('foro').value));
+    const primera = clamp(parseFloat(document.getElementById('primera').value));
+    const participacion = clamp(parseFloat(document.getElementById('participacion').value));
+    const final = clamp(parseFloat(document.getElementById('final').value));
+    const notaMinima = clamp(parseFloat(document.getElementById('minima').value) || 70);
+
+    // Puntos reales acumulados (sobre 70 puntos posibles)
+    const puntosAcumulados =
+      (foro * PESO_FORO) +
+      (primera * PESO_PRIMERA) +
+      (participacion * PESO_PARTICIPACION) +
+      (final * PESO_FINAL);
+
+    // Puntos que faltan para la nota mínima
+    const puntosFaltantes = notaMinima - puntosAcumulados;
+
+    // Nota necesaria en el examen teórico (sobre 100)
+    const notaNecesaria = puntosFaltantes / PESO_EXAMEN;
+
+    // Mostrar resultados numéricos
+    document.getElementById('puntosAcum').textContent = puntosAcumulados.toFixed(2) + ' pts';
+    document.getElementById('puntosFaltan').textContent =
+      (puntosFaltantes > 0 ? puntosFaltantes.toFixed(2) : '0.00') + ' pts';
+
+    const notaEl = document.getElementById('notaExamen');
+    notaEl.textContent = notaNecesaria <= 0 ? '0' : notaNecesaria.toFixed(1);
+
+    // Mensaje motivacional dinámico + colores
+    let msgClass, msgText, color;
+
+    if(notaNecesaria <= 0){
+      msgClass = 'msg-success';
+      msgText = '🎉 ¡Ya aprobaste! No necesitas nada en el examen. ¡Eres una crack!';
+      color = 'var(--success-dark)';
+    } else if(notaNecesaria < 50){
+      msgClass = 'msg-easy';
+      msgText = '😘 La tienes fácil, mi amor. ¡Tú puedes con eso y más!';
+      color = 'var(--pink-600)';
+    } else if(notaNecesaria < 70){
+      msgClass = 'msg-mid';
+      msgText = '💪 Toca esforzarse un poquito, pero sé que lo vas a lograr.';
+      color = 'var(--warning-dark)';
+    } else if(notaNecesaria <= 100){
+      msgClass = 'msg-hard';
+      msgText = '🔥 Va a estar retador, ¡pero confío ciegamente en ti! A estudiar.';
+      color = 'var(--danger-dark)';
+    } else {
+      msgClass = 'msg-impossible';
+      msgText = '😅 Matemáticamente imposible... mejor habla con el profe.';
+      color = '#c0392b';
+    }
+
+    notaEl.style.color = color;
+    mensajeBox.className = 'message ' + msgClass;
+    mensajeBox.textContent = msgText;
+
+    // Mostrar caja de resultado con animación
+    resultBox.classList.remove('show');
+    void resultBox.offsetWidth; // reinicia animación
+    resultBox.classList.add('show');
+  });
+</script>
+
+</body>
+</html>
